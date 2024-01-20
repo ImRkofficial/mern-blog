@@ -21,8 +21,10 @@ mongoose
 
   // Importing Routes
   import userRoutes from './routes/user.route.js';
+  import authRoutes from './routes/auth.route.js';
 
-  app.use('/api/users',userRoutes);
+  app.use('/api/user',userRoutes);
+  app.use("/api/auth",authRoutes)
 
 app.listen(3000, () => {
   console.log("Server is running on Port 3000");
