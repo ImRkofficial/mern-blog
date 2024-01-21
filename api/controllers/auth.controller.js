@@ -3,7 +3,7 @@ import {asyncHandler} from './../utils/asyncHandler.js';
 import {ApiError} from '../utils/apiError.js';
 import {ApiResponse} from '../utils/apiResponse.js';
 
-const signUp = asyncHandler(async (req,res)=>{
+const signUp = asyncHandler(async (req,res,next)=>{
     const { username, email, password } = req.body;
 
     if(!username || !email || !password){
@@ -15,7 +15,7 @@ const signUp = asyncHandler(async (req,res)=>{
     });
 
     if(existedUser){
-        throw new ApiError(400,"User already exist")
+        throw new ApiError(400,"User already exists")
     };
 
     const user = await User.create({
