@@ -1,45 +1,38 @@
 import User from './../models/user.model.js';
-import bcryptjs from 'bcryptjs';
+import {asyncHandler} from './../utils/asyncHandler.js';
+import {ApiError} from '../utils/apiError.js';
+import {ApiResponse} from '../utils/apiResponse.js';
 
-export const signUp = async (req,res)=>{
-    const {username, email, password} = req.body;
-     
-    if(!email || !username || !password ){
-       return res.status(401).json({
-            message:"All fields are required"
-        })
+const signUp = asyncHandler(async (req,res)=>{
+    const { username, email, password } = req.body;
+
+    if(!username || !email || !password){
+        throw new ApiError(400,"All fields are required")
     }
 
-    const existedUser = await User.findOne({email});
-
-    if(existedUser){
-      return  res.status(500).json({
-            success:false,
-            message:"User already exists"
-        })
-    }
-
-    const hashPassword = bcryptjs.hashSync(password,10)
-
-    const createdUser = new User ({
-        username:username.toLowerCase(),
-        email:email,
-        password:hashPassword
+    const existedUser = await User.findOne({
+        $or:[{username},{email}]
     });
 
-   try {
-    const user = await createdUser.save();
+    if(existedUser){
+        throw new ApiError(400,"User already exist")
+    };
 
-  return  res.status(201).json({
-        user,
-        message:"Signup Successfull"
-    })
-   } catch (error) {
-    return  res.status(400).json({
-        message:error.message,
-        success:false
-    })
-   }
-} ;
+    const user = await User.create({
+        username:username.toLowerCase(),
+        email,
+        password
+    });
 
+    const createdUser = await User.findById(user._id).select("-password");
 
+    if(!createdUser){
+        throw new ApiError(500,"Something Went wrong while creating user")
+    }
+
+    return res.status(201).json(
+        new ApiResponse(201,createdUser,"Signup successfully")
+    )
+});
+
+export {signUp}
