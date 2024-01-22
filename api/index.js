@@ -3,11 +3,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({extended:true}));
 app.use(express.json());
+app.use(cookieParser());
 
 mongoose
   .connect(process.env.MONGODB_URI)
