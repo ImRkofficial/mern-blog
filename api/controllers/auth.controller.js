@@ -3,6 +3,7 @@ import { asyncHandler } from "./../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
+import bcrypt from 'bcrypt';
 
 const signUp = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -54,10 +55,10 @@ const signIn = asyncHandler(async (req, res) => {
       message: "User not found",
     });
   }
-  console.log(isUserExist)
+  console.log(isUserExist);
 
   const isPasswordCorrect = await isUserExist.comparePassword(password);
-  console.log("User comapre password",isPasswordCorrect)
+  console.log("User comapre password", isPasswordCorrect);
 
   if (!isPasswordCorrect) {
     res.status(401).json({
@@ -66,7 +67,7 @@ const signIn = asyncHandler(async (req, res) => {
     });
   }
 
-  const user = await User.findById(isUserExist._id).select("-password")
+  const user = await User.findById(isUserExist._id).select("-password");
 
   const accessToken = jwt.sign(
     { id: isUserExist._id },
@@ -74,13 +75,41 @@ const signIn = asyncHandler(async (req, res) => {
     { expiresIn: "2d" }
   );
   const cookieOptions = {
-    httpOnly:true
-  }
+    httpOnly: true,
+  };
 
-   return res.status(200)
-    .cookie("access_token",accessToken,cookieOptions)
-    .json(user)
-
+  return res
+    .status(200)
+    .cookie("access_token", accessToken, cookieOptions)
+    .json(user);
 });
 
-export { signUp,signIn };
+const google = asyncHandler(async (req, res) => {
+  const { name, email, googlePhotoUrl } = req.body;
+
+  try {
+    const user = await User.findOne({ email }).select("-password");
+
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
+
+      const cookieOptions = {
+        httpOnly: true,
+      };
+
+      res.status(200).cookie("access_token", token, cookieOptions).json(user);
+    }else{
+      const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const hashedPassword = await bcrypt.hash(generatedPassword,10);
+      const newUser = new User({
+        username:name.toLowerCase().split(" ").join('') + Math.random().toString(9).slice(-4),
+        email,
+        password:hashedPassword,
+        profilePicture:googlePhotoUrl
+      });
+      await newUser.save();
+    }
+  } catch (error) {}
+});
+
+export { signUp, signIn, google };
