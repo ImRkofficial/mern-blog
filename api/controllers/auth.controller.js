@@ -41,7 +41,7 @@ const signIn = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password || !email === "" || password === "") {
-    res.status(401).json({
+  return  res.status(401).json({
       success: false,
       message: "All fields are required",
     });
@@ -50,7 +50,7 @@ const signIn = asyncHandler(async (req, res) => {
   const isUserExist = await User.findOne({ email });
 
   if (!isUserExist) {
-    res.status(404).json({
+   return res.status(404).json({
       success: false,
       message: "User not found",
     });
@@ -61,7 +61,7 @@ const signIn = asyncHandler(async (req, res) => {
   console.log("User comapre password", isPasswordCorrect);
 
   if (!isPasswordCorrect) {
-    res.status(401).json({
+   return res.status(401).json({
       success: false,
       message: "Invalid credentials",
     });
@@ -97,7 +97,7 @@ const google = asyncHandler(async (req, res) => {
         httpOnly: true,
       };
 
-      res.status(200).cookie("access_token", token, cookieOptions).json(user);
+    return  res.status(200).cookie("access_token", token, cookieOptions).json(user);
     }else{
       const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
       const hashedPassword = await bcrypt.hash(generatedPassword,10);
