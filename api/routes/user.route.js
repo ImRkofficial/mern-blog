@@ -1,8 +1,10 @@
 import express from 'express'
-import { test } from '../controllers/user.controller.js';
+import { updateUserInfo } from '../controllers/user.controller.js';
+import verifyUser from '../utils/verifyUser.js';
+
 const router = express.Router();
 
-router.route('/test').get(test)
+router.route('/update/:userId').put(verifyUser,updateUserInfo)
 
 
 
