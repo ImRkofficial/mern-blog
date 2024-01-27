@@ -70,7 +70,7 @@ const signIn = asyncHandler(async (req, res) => {
   const user = await User.findById(isUserExist._id).select("-password");
 
   const accessToken = jwt.sign(
-    { id: isUserExist._id },
+    { id: isUserExist._id, isAdmin:isUserExist.isAdmin },
     process.env.JWT_SECRET_KEY,
     { expiresIn: "2d" }
   );
@@ -91,7 +91,7 @@ const google = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email }).select("-password");
 
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
+      const token = jwt.sign({ id: user._id , isAdmin:user.isAdmin}, process.env.JWT_SECRET_KEY);
 
       const cookieOptions = {
         httpOnly: true,
@@ -108,8 +108,26 @@ const google = asyncHandler(async (req, res) => {
         profilePicture:googlePhotoUrl
       });
       await newUser.save();
+
+      const token = jwt.sign({id:newUser._id, isAdmin:newUser.isAdmin},process.env.JWT_SECRET_KEY);
+
+      const user = await User.findById(newUser._id).select("-password");
+
+      return res
+      .status(200)
+      .cookie('access_token',token,{
+        httpOnly:true
+      })
+      .json(
+        new ApiResponse(200,user,"Success")
+      )
     }
-  } catch (error) {}
+  } catch (error) {
+    return res.status(400).json({
+      message:"Something went wrong",
+      success:false
+    })
+  }
 });
 
 export { signUp, signIn, google };
