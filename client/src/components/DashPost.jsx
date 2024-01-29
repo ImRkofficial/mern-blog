@@ -8,7 +8,8 @@ const DashPost = () => {
   const userId = currentUser._id || currentUser.updatedUser?._id;
   const isUserAdmin = currentUser.isAdmin || currentUser.updatedUser?.isAdmin;
   const [userPosts,setUserPosts] = useState([]);
-console.log(userPosts);
+  const [showMore,setShowMore] = useState(true);
+
 
   const fetchPosts = async()=>{
     try {
@@ -17,9 +18,12 @@ console.log(userPosts);
       
       if(res.ok){
         setUserPosts(data.posts)
+        if(data.posts.length < 9){
+          setShowMore(false);
+        }
       }
     } catch (error) {
-      
+      console.log(error.message)
     }
   }
 
@@ -27,7 +31,25 @@ console.log(userPosts);
     if(isUserAdmin){
       fetchPosts();
     }
-  },[userId])
+  },[userId]);
+
+  const handleShowMore = async()=>{
+    const startIndex = userPosts.length;
+    try {
+      const res = await fetch(`/api/post/getposts?userId=${userId}&startIndex=${startIndex}`)
+      const data = await res.json();
+      
+      if(res.ok){
+        setUserPosts((prev)=>[...prev,...data.posts])
+        if(data.posts.length < 9){
+          setShowMore(false)
+        }
+      }
+      
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   return (
     <>
       <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
@@ -47,8 +69,8 @@ console.log(userPosts);
                   <span>Edit</span>
                 </Table.HeadCell>
               </Table.Head>
-              {userPosts.map((post)=>(
-                <Table.Body className='divide-y'>
+              {userPosts.map((post,i)=>(
+                <Table.Body className='divide-y' key={i}>
                   <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                     <Table.Cell>
                       {new Date(post.updatedAt).toLocaleDateString()}
@@ -87,6 +109,13 @@ console.log(userPosts);
               ))}
 
             </Table>
+            {showMore && (
+              <button className='w-full text-teal-500 text-center text-sm py-7'
+                onClick={handleShowMore}
+              >
+                Show More
+              </button>
+            )}
           </>
         ):(
           <p>There is no posts yet </p>
