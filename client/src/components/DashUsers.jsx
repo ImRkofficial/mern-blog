@@ -54,8 +54,21 @@ const DashUsers = () => {
     }
   };
 
-  const handleDeleteUser = ()=>{
-
+  const handleDeleteUser = async ()=>{
+    try {
+      const res= await fetch(`/api/user/delete/${userIdToDelete}`,{
+        method:"DELETE"
+      });
+      const data = await res.json();
+      if(res.ok){
+        setUsers((prev=>prev.filter((user)=>user._id !== userIdToDelete)));
+        setShowModel(false);
+      }else{
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
  
@@ -104,7 +117,8 @@ const DashUsers = () => {
                       <span className='font-medium text-red-500 cursor-pointer hover:underline'
                         onClick={()=>{
                           setShowModel(true)
-                          setUserIdToDelete(user.id)
+                          setUserIdToDelete(user._id)
+                          console.log(user._id);
                         }}
                       >
                         Delete

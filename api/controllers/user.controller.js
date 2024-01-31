@@ -67,7 +67,7 @@ const updateUserInfo = asyncHandler(async (req,res)=>{
 });
 
 const deleteUser = asyncHandler(async (req,res)=>{
-    if(req.user.id !== req.params.userId){
+    if(!req.user.isAdmin && req.user.id !== req.params.userId){
         return res.status(401).json({
             message:"You are not allowed to delete this user"
         })
