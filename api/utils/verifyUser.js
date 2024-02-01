@@ -6,12 +6,16 @@ const verifyUser = asyncHandler(async (req,res,next)=>{
     const token = req.cookies.access_token
 
     if(!token){
-         throw new ApiError(401,"Unauthorized")
+         return res.status(400).json({
+            message:"Unauthorized"
+         })
     };
 
     jwt.verify(token,process.env.JWT_SECRET_KEY,(error,user)=>{
         if(error){
-            throw new ApiError(401,"Unauthorized")
+            return res.status(400).json({
+                message:"Unauthorized"
+             })
         }
 
         req.user = user;

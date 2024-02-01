@@ -1,0 +1,92 @@
+import { Alert, Button, TextInput, Textarea } from 'flowbite-react';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+
+const CommentSection = ({postId}) => {
+    const {currentUser} = useSelector((state)=> state.user);
+    const userId = currentUser?._id || currentUser?.updatedUser?._id;
+    const [comment,setComment] = useState('');
+    const [commentError ,setCommentError] = useState(null);
+
+    const handleSubmit =async (e)=>{
+        e.preventDefault();
+
+        if(comment.length > 200){
+            return;
+        }
+
+       try {
+        const res = await fetch(`/api/comment/create`,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({content:comment,userId,postId})
+        });
+
+        const data = await res.json();
+
+        if(res.ok){
+            setComment('');
+            setCommentError(null)
+        }
+        if(!res.ok){
+            setCommentError("Something went wrong")
+        }
+       } catch (error) {
+        setCommentError(error.message);
+       }
+    };
+  return (
+    <div className='max-w-2xl mx-auto w-full p-3 '>
+    {currentUser ? (
+        <>
+            <div className="flex gap-3 items-center text-gray-500 my-5 text-sm">
+                <p>Signed in as:</p>
+                <img
+                className='h-5 w-5 object-cover rounded-full'
+                src={currentUser.profilePicture || currentUser.updatedUser?.profilePicture} 
+                alt={currentUser.username || currentUser.updatedUser?.username} />
+                <Link to={'/dashboard?tab=profile'} className='text-xs text-cyan-500 hover:underline'>
+                    @{currentUser.username || currentUser.updatedUser?.username}
+                </Link>
+            </div>
+        </>
+    ):(
+        <>
+            <div className="text-sm text-teal-500 my-5">
+                You must be signed in to comment
+                <Link className='text-blue-500 hover:underline' to={'/sign-in'}>
+                    Sign In
+                </Link>
+            </div>
+        </>
+    )}
+    {currentUser && (
+        <form className='border-teal-500 rounded-md p-3'
+            onSubmit={handleSubmit}
+        >
+            <Textarea
+                rows='3'
+                maxLength="200"
+                placeholder='Add a comment...'
+                onChange={(e)=>setComment(e.target.value)}
+                value={comment}
+            />
+            <div className="flex justify-between items-center mt-5 ">
+                <p className='text-gray-500 text-xs'>{200 - comment.length} characters remaining</p>
+                <Button outline gradientDuoTone={'purpleToBlue'} type='submit'>
+                    Submit
+                </Button>
+            </div>
+            {commentError && (
+                <Alert className='mt-5' color="failure">{commentError}</Alert>
+            )}
+        </form>
+    )}
+    </div>
+  )
+}
+
+export default CommentSection
