@@ -33,5 +33,22 @@ const createComment = asyncHandler(async(req,res)=>{
     }
 });
 
+const getPostComments = asyncHandler(async(req,res)=>{
+    try {
+        const comments = await Comment.find({postId:req.params.postId}).sort({
+            createdAt:-1
+        });
 
-export { createComment };
+        return res.status(200).json({
+            comments,
+            message:"Success"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message:error.message
+        })
+    }
+});
+
+
+export { createComment, getPostComments };

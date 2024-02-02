@@ -144,6 +144,29 @@ const getUsers = asyncHandler(async (req,res)=>{
             success:false
         })
     }
-})
+});
 
-export {updateUserInfo,deleteUser,signOut,getUsers};
+const getUser = asyncHandler(async(req,res)=>{
+    try {
+        const user = await User.findById(req.params.userId).select("-password");
+
+        if(!user){
+            return res.status(404).json({
+                message:"User not found",
+                success:false
+            })
+        };
+
+        return res.status(200).json({
+            user
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message:error.message,
+            success:false
+        })
+    }
+});
+
+export {updateUserInfo,deleteUser,signOut,getUsers,getUser};

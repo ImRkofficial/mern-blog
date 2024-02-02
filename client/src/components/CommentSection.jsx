@@ -1,13 +1,15 @@
 import { Alert, Button, TextInput, Textarea } from 'flowbite-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Comment from './Comment';
 
 const CommentSection = ({postId}) => {
     const {currentUser} = useSelector((state)=> state.user);
     const userId = currentUser?._id || currentUser?.updatedUser?._id;
     const [comment,setComment] = useState('');
     const [commentError ,setCommentError] = useState(null);
+    const [comments,setComments]= useState(null);
 
     const handleSubmit =async (e)=>{
         e.preventDefault();
@@ -29,7 +31,8 @@ const CommentSection = ({postId}) => {
 
         if(res.ok){
             setComment('');
-            setCommentError(null)
+            setCommentError(null);
+            setComments([data,...comments])
         }
         if(!res.ok){
             setCommentError("Something went wrong")
@@ -38,6 +41,22 @@ const CommentSection = ({postId}) => {
         setCommentError(error.message);
        }
     };
+
+    const getComments = async ()=>{
+        try {
+            const res = await fetch(`/api/comment/getPostComments/${postId}`);
+        const data = await res.json();
+
+        if(res.ok){
+            setComments(data.comments);
+        }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(()=>{
+        getComments();
+    },[postId])
   return (
     <div className='max-w-2xl mx-auto w-full p-3 '>
     {currentUser ? (
@@ -85,8 +104,25 @@ const CommentSection = ({postId}) => {
             )}
         </form>
     )}
+    {comments?.length === 0 ? (
+        <p className='text-sm my-5'>
+            No comments yet!
+        </p>
+    ) : (
+        <>
+            <div className="flex items-center gap-2 text-sm my-5">
+            <div className="border-gray-400 ">
+                <p className='text-xl'>{comments?.length}</p>
+            </div>
+            <p className='text-xl'>Comments</p>
+        </div>
+        {comments?.map((value)=>(
+            <Comment key={value._id} comment={value}/>
+        ))}
+        </>
+    )}
     </div>
   )
 }
 
-export default CommentSection
+export default CommentSection;
