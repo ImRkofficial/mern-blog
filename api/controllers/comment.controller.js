@@ -50,5 +50,35 @@ const getPostComments = asyncHandler(async(req,res)=>{
     }
 });
 
+const likeComment = asyncHandler(async(req,res)=>{
+    try {
+        const comment =  await Comment.findById(req.params.commentId);
 
-export { createComment, getPostComments };
+        if(!comment){
+            return res.status(404).json({
+                message:"Comment not found"
+            })
+        };
+
+        const userIndex = comment.likes.indexOf(req.user.id);
+
+        if(userIndex === -1){
+            comment.numberOfLikes += 1;
+            comment.likes.push(req.user.id)
+        }else{
+            comment.numberOfLikes -=1;
+            comment.likes.splice(userIndex,1)
+        }
+
+        await comment.save();
+
+        return res.status(200).json({comment})
+    } catch (error) {
+        return res.status(500).json({
+            message:error?.message
+        })
+    }
+});
+
+
+export { createComment, getPostComments, likeComment };
