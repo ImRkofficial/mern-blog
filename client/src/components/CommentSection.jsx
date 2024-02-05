@@ -15,7 +15,7 @@ const CommentSection = ({postId}) => {
     const handleSubmit =async (e)=>{
         e.preventDefault();
 
-        if(comment.length > 200){
+        if(comment?.length > 200){
             return;
         }
 
@@ -73,13 +73,13 @@ const CommentSection = ({postId}) => {
             
             if(res.ok){
                 const data = await res.json();
-                setComments(comments.map((comment)=>{
-                    comment._id === commentId ? {
+                setComments(comments.map((comment)=>
+                    comment?._id === commentId ? {
                         ...comment,
                         likes:data.likes,
-                        numberOfLikes:data.likes.length
+                        numberOfLikes:data.likes?.length
                     } : comment
-                }))
+                ))
             }
         } catch (error) {
             console.log(error.message);
@@ -117,12 +117,12 @@ const CommentSection = ({postId}) => {
             <Textarea
                 rows='3'
                 maxLength="200"
-                placeholder='Add a comment...'
+                placeholder='Add a comment?...'
                 onChange={(e)=>setComment(e.target.value)}
                 value={comment}
             />
             <div className="flex justify-between items-center mt-5 ">
-                <p className='text-gray-500 text-xs'>{200 - comment.length} characters remaining</p>
+                <p className='text-gray-500 text-xs'>{200 - comment?.length} characters remaining</p>
                 <Button outline gradientDuoTone={'purpleToBlue'} type='submit'>
                     Submit
                 </Button>
@@ -139,13 +139,13 @@ const CommentSection = ({postId}) => {
     ) : (
         <>
             <div className="flex items-center gap-2 text-sm my-5">
+            <p className='text-xl'>Comments</p>
             <div className="border-gray-400 ">
                 <p className='text-xl'>{comments?.length}</p>
             </div>
-            <p className='text-xl'>Comments</p>
         </div>
-        {comments?.map((value)=>(
-            <Comment key={value._id} comment={value} onLike={handleLike} />
+        {comments?.map((comment)=>(
+            <Comment key={comment._id} comment={comment} onLike={handleLike} />
         ))}
         </>
     )}

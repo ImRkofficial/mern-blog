@@ -16,9 +16,10 @@ const DashPost = () => {
 
   const fetchPosts = async()=>{
     try {
+      console.log(userId);
       const res = await fetch(`/api/post/getposts?userId=${userId}`);
       const data = await res.json();
-      
+      console.log(data);
       if(res.ok){
         setUserPosts(data.posts)
         if(data.posts.length < 9){

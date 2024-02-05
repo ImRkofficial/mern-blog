@@ -4,14 +4,15 @@ import { FaThumbsUp } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 const Comment = ({ comment, onLike }) => {
+  const {newComment} = comment;
   const { currentUser } = useSelector((state) => state.user);
   const [user, setUser] = useState({});
-  console.log("this is a comment", comment);
-  console.log(user);
+  const mainComment = newComment || comment;
+ 
   useEffect(() => {
     const getUser = async () => {
       try {
-        const res = await fetch(`/api/user/${comment.userId}`);
+        const res = await fetch(`/api/user/${mainComment.userId}`);
         const data = await res.json();
 
         if (res.ok) {
@@ -22,7 +23,7 @@ const Comment = ({ comment, onLike }) => {
       }
     };
     getUser();
-  }, [comment]);
+  }, [mainComment]);
   return (
     <>
       <div className="flex p-4 border-b dark:border-gray-600 text-sm">
@@ -37,29 +38,28 @@ const Comment = ({ comment, onLike }) => {
           <div className="font-bold mr-1 text-xs truncate">
             <span>{user ? `@${user.username}` : "anonymous user"}</span>
             <span className="text-gray-500 text-xs ml-2">
-              {moment(comment?.createdAt).fromNow()}
+              {moment(mainComment?.createdAt).fromNow()}
             </span>
           </div>
-          <p className="text-gray-500 pb-2">{comment.content}</p>
+          <p className="text-gray-500 pb-2">{mainComment?.content}</p>
           <div className="pt-2 text-xs flex items-center border-t dark:border-gray-700 max-w-fit gap-2">
             <button
               className={`text-gray-400 hover:text-blue-500 ${
                 currentUser &&
-                comment.likes.includes(
-                  currentUser._id || currentUser?.updatedUser?._id
-                ) &&
+                mainComment?.likes?.includes(
+                  currentUser._id || currentUser?.updatedUser?._id) &&
                 "!text-blue-500"
               }`}
               type="button"
-              onClick={() => onLike(comment._id)}
+              onClick={() => onLike(mainComment?._id)}
             >
               <FaThumbsUp className="text-sm" />
             </button>
             <p className="text-gray-400">
-              {comment.numberOfLikes > 0 &&
-                comment.numberOfLikes +
+              {mainComment?.numberOfLikes > 0 &&
+                mainComment?.numberOfLikes +
                   " " +
-                  (comment.numberOfLikes === 1 ? "Like" : "Likes")}
+                  (mainComment?.numberOfLikes === 1 ? "Like" : "Likes")}
             </p>
           </div>
         </div>
