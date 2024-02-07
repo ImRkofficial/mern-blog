@@ -80,5 +80,31 @@ const likeComment = asyncHandler(async(req,res)=>{
     }
 });
 
+const editComment = asyncHandler(async (req,res)=>{
+    try {
+        const comment = await Comment.findById(req.params.commentId);
+        if(!comment){
+            return res.status(404).json({
+                success:false,
+                message:"Comment not found"
+            })
+        };
 
-export { createComment, getPostComments, likeComment };
+        if(req.user.id !== comment.userId && !req.user.isAdmin){
+            return res.status(403).json({
+                message:"You are not allowed to edit this comment",
+                success:false
+            })
+        };
+
+        const editedComment = await Comment.findByIdAndUpdate(req.params.commentId,{
+            content:req.body.content
+        },{
+            new:true
+        })
+    } catch (error) {
+        
+    }
+});
+
+export { createComment, getPostComments, likeComment,editComment };
