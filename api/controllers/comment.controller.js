@@ -107,4 +107,33 @@ const editComment = asyncHandler(async (req,res)=>{
     }
 });
 
-export { createComment, getPostComments, likeComment,editComment };
+const deleteComment = asyncHandler(async (req,res)=>{
+    try {
+        const comment = await Comment.findById(req.params.commentId);
+        if(!comment){
+            return res.status(404).json({
+                message:"Comment not found",
+                success:false
+            })
+        };
+        if(comment.userId !== req.user.id || !req.user.isAdmin){
+            return res.status(400).json({
+                message:"You are not allowed to delete this comment",
+                success:false
+            })
+        };
+
+        await Comment.findByIdAndDelete(req.params.commentId);
+
+        return res.status(200).json({
+            message:"Comment has been deleted",
+            success:true
+        })
+    } catch (error) {
+        return res.status(400).json({
+            message:error.message,
+            success:false
+        })
+    }
+})
+export { createComment, getPostComments, likeComment,editComment, deleteComment };
