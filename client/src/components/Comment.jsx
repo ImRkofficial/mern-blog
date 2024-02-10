@@ -116,8 +116,8 @@ const Comment = ({ comment, onLike,onEdit,onDelete}) => {
                     (mainComment?.numberOfLikes === 1 ? "Like" : "Likes")}
               </p>
               {
-                currentUser && (currentUser._id  === comment.userId || currentUser.isAdmin) &&(
-                  <>
+                currentUser && (currentUser._id  === comment.userId || (currentUser.isAdmin || currentUser.updatedUser.isAdmin)) &&(
+                 
                     <button
                   type="button"
                   onClick={handleEdit}
@@ -125,6 +125,9 @@ const Comment = ({ comment, onLike,onEdit,onDelete}) => {
                   >
                     Edit
                   </button>
+                  )
+              }
+              { currentUser && (currentUser._id  === comment.userId) && (
                   <button
                   type="button"
                   onClick={()=>onDelete(comment._id)}
@@ -132,7 +135,7 @@ const Comment = ({ comment, onLike,onEdit,onDelete}) => {
                   >
                     Delete
                   </button>
-                  </>
+                  
                 )
               }
             </div>
