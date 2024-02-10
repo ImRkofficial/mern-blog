@@ -116,12 +116,14 @@ const deleteComment = asyncHandler(async (req,res)=>{
                 success:false
             })
         };
-        if(comment.userId !== req.user.id || !req.user.isAdmin){
+        if(comment.userId.toString() !== req.user.id.toString() && !req.user.isAdmin){
             return res.status(400).json({
                 message:"You are not allowed to delete this comment",
+                user:req.user,
                 success:false
-            })
-        };
+            });
+        }
+        
 
         await Comment.findByIdAndDelete(req.params.commentId);
 
@@ -135,5 +137,41 @@ const deleteComment = asyncHandler(async (req,res)=>{
             success:false
         })
     }
-})
-export { createComment, getPostComments, likeComment,editComment, deleteComment };
+});
+
+const getAllComments = asyncHandler(async (req,res)=>{
+    
+    if(!req.user.isAdmin){
+        return res.status(403).json({
+            message:"You are not allowed to access this route",
+            success:false
+        })
+    }
+
+   try {
+    const startIndex = parseInt(req.query.startIndex) || 0 ;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.sort === 'desc' ? -1 : 1;
+    const comments = await Comment.find()
+        .sort({createdAt:sortDirection})
+        .skip(startIndex)
+        .limit(limit);
+
+        const totalComments = await Comment.countDocuments();
+
+        const now = new Date();
+        const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+        const commentsInLastMonth = await Comment.countDocuments({createdAt:{$gte:oneMonthAgo}});
+    return res.status(200).json({
+        comments,
+        commentsInLastMonth,
+        totalComments
+    });
+   } catch (error) {
+    return res.status(500).json({
+        success:false,
+        message:"Something went wrong"
+    })
+   }
+});
+export { createComment, getPostComments, likeComment,editComment, deleteComment,getAllComments };
