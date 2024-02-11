@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation,useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,12 +9,21 @@ import { signOutSuccess } from "../redux/user/userSlice";
 
 
 const Header = () => {
+  const navigate = useNavigate();
   const path = useLocation().pathname;
+  const location = useLocation();
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector(state=> state.theme);
   const dispatch = useDispatch();
 
+  const [searchTerm,setSearchTerm] = useState('');
 
+
+  useEffect(()=>{
+    const urlParams = new URLSearchParams(location.search);
+    const searchTerm = urlParams.get('searchTerm');
+    console.log(searchTerm);
+  },[searchTerm])
   
   const handleSignOut = async ()=>{
     try {
@@ -34,6 +43,20 @@ const Header = () => {
       console.log(error.message)
     }
   }
+
+  const handleSubmit =(e)=>{
+    e.preventDefault();
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set('searchTerm',searchTerm);
+    const searchQuery = urlParams.toString();
+
+    navigate(`/search?${searchQuery}`);
+    
+  }
+
+  const handleSearchClick = ()=>{
+    navigate('/search')
+  }
   return (
     <>
       <Navbar className="border-b-2">
@@ -46,20 +69,22 @@ const Header = () => {
           </span>
           Blog
         </Link>
-        <form>
+        <form onSubmit={handleSubmit}>
           <TextInput
             type="text"
             placeholder="search"
             rightIcon={AiOutlineSearch}
             className="hidden lg:inline"
+            value={searchTerm}
+            onChange={(e)=> setSearchTerm(e.target.value)}
           />
         </form>
-        <Button className="h-10 w-12 lg:hidden " pill color="gray">
+        <Button className="h-10 w-12 lg:hidden " pill color="gray" onClick={handleSearchClick}>
           <AiOutlineSearch />
         </Button>
         <div className="flex gap-2 md:order-2 ">
           <Button
-            className="w-12 h-10 hidden sm:inline"
+            className="w-12 h-10  sm:inline"
             color="gray"
             pill
             onClick={() => dispatch(toggleTheme())}

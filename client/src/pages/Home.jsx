@@ -41,7 +41,7 @@ const Home = () => {
           {posts && posts.length > 0 && (
             <div className="flex  flex-col gap-6">
               <h2 className='text-2xl font-semiblod text-center'>Recent Posts</h2>
-              <div className="flex mt-5 flex-wrap gap-4 justify-center lg:flex-nowrap">
+              <div className="flex mt-5 flex-wrap gap-4 justify-center ">
                 {posts.map((post,i)=>(
                   <PostCard key={i} post={post}/>
                 ))}
