@@ -22,7 +22,7 @@ const Header = () => {
   useEffect(()=>{
     const urlParams = new URLSearchParams(location.search);
     const searchTerm = urlParams.get('searchTerm');
-    console.log(searchTerm);
+    
   },[searchTerm])
   
   const handleSignOut = async ()=>{

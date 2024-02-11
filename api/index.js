@@ -4,6 +4,7 @@ dotenv.config();
 
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
+import path from 'path';
 
 const app = express();
 
@@ -20,7 +21,7 @@ mongoose
     console.log(err.message);
   });
 
-
+const __dirname = path.resolve()
   // Importing Routes
   import userRoutes from './routes/user.route.js';
   import authRoutes from './routes/auth.route.js';
@@ -32,7 +33,11 @@ mongoose
   app.use("/api/post",postRoutes);
   app.use("/api/comment",commentRoutes);
 
+app.use(express.static(path.join(__dirname,'/client/dist')))
 
+app.get('*',(req,res)=>{
+  res.sendFile(path.join(__dirname,'client','dist','index.html'))
+})
 
 app.listen(3000, () => {
   console.log("Server is running on Port 3000");
