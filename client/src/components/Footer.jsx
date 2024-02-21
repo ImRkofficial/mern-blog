@@ -72,7 +72,7 @@ const FooterCom = () => {
         </div>
         <div className="w-full flex gap-6 sm:mt-0 mt-4 sm:justify-end">
             <Footer.Icon href="https://www.github.com/imRkofficial" icon={BsGithub} />
-            <Footer.Icon href="#" icon={BsLinkedin} />
+            <Footer.Icon href="https://www.linkedin.com/in/rahul-sharma-482bba26a/" icon={BsLinkedin} />
             <Footer.Icon href="#" icon={BsTwitterX} />
             <Footer.Icon href="#" icon={BsInstagram} />
         </div>

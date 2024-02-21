@@ -215,7 +215,7 @@ const DashProfile = () => {
           <img
             src={
               imageUrl ||
-              currentUser.profilePicture ||
+              currentUser?.profilePicture ||
               currentUser.updatedUser?.profilePicture
             }
             alt="user"

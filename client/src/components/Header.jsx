@@ -99,7 +99,7 @@ const Header = () => {
               label={
                 <Avatar
                   alt="user avatar"
-                  img={currentUser.profilePicture || currentUser.updatedUser.profilePicture}
+                  img={currentUser?.profilePicture || currentUser.updatedUser?.profilePicture}
                   rounded
                 />
               }

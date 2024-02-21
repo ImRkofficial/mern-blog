@@ -126,7 +126,7 @@ const CommentSection = ({postId}) => {
                 <p>Signed in as:</p>
                 <img
                 className='h-5 w-5 object-cover rounded-full'
-                src={currentUser.profilePicture || currentUser.updatedUser?.profilePicture} 
+                src={currentUser?.profilePicture || currentUser.updatedUser?.profilePicture} 
                 alt={currentUser.username || currentUser.updatedUser?.username} />
                 <Link to={'/dashboard?tab=profile'} className='text-xs text-cyan-500 hover:underline'>
                     @{currentUser.username || currentUser.updatedUser?.username}

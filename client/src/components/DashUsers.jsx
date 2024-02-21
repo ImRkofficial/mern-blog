@@ -98,7 +98,7 @@ const DashUsers = () => {
                     </Table.Cell>
                     <Table.Cell>
                         <img
-                          src={user.profilePicture}
+                          src={user?.profilePicture}
                           alt={user.username}
                           className='w-10 h-10 bg-gray-500 object-cover rounded-full'
                         />
