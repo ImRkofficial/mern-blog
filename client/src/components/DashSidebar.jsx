@@ -43,7 +43,7 @@ const DashSidebar = () => {
       <Sidebar className="w-full">
         <Sidebar.Items>
           <Sidebar.ItemGroup className="flex flex-col gap-1">
-            {(currentUser.isAdmin || currentUser?.updatedUser?.isAdmin) && (
+            {(currentUser?.isAdmin || currentUser?.updatedUser?.isAdmin) && (
               <Link to={'/dashboard?tab=dashboard'}>
                 <Sidebar.Item
                   active={tab === "dashboard" || !tab }
@@ -58,14 +58,14 @@ const DashSidebar = () => {
               <Sidebar.Item
                 active={tab === "profile"}
                 icon={HiUser}
-                label={currentUser.isAdmin || currentUser.updatedUser?.isAdmin ? "Admin" : "User"}
+                label={currentUser?.isAdmin || currentUser.updatedUser?.isAdmin ? "Admin" : "User"}
                 labelColor="dark"
                 as="div"
               >
                 Profile
               </Sidebar.Item>
             </Link>
-            {(currentUser.isAdmin || currentUser?.updatedUser?.isAdmin) && (
+            {(currentUser?.isAdmin || currentUser?.updatedUser?.isAdmin) && (
               <Link to={'/dashboard?tab=posts'}>
               <Sidebar.Item 
                 active={tab === 'posts'}
@@ -76,7 +76,7 @@ const DashSidebar = () => {
               </Sidebar.Item>
             </Link>
             )}
-             {(currentUser.isAdmin || currentUser?.updatedUser?.isAdmin) && (
+             {(currentUser?.isAdmin || currentUser?.updatedUser?.isAdmin) && (
               <Link to={'/dashboard?tab=users'}>
               <Sidebar.Item 
                 active={tab === 'users'}
@@ -87,7 +87,7 @@ const DashSidebar = () => {
               </Sidebar.Item>
             </Link>
             )}
-             {(currentUser.isAdmin || currentUser?.updatedUser?.isAdmin) && (
+             {(currentUser?.isAdmin || currentUser?.updatedUser?.isAdmin) && (
               <Link to={'/dashboard?tab=comments'}>
               <Sidebar.Item 
                 active={tab === 'comments'}

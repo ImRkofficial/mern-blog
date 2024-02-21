@@ -257,7 +257,7 @@ const DashProfile = () => {
           {loading ? "Loading..." : "Update" }
         </Button>
        
-        {(currentUser.isAdmin || currentUser?.updatedUser?.isAdmin) &&  
+        {(currentUser?.isAdmin || currentUser?.updatedUser?.isAdmin) &&  
           <Link to={'/create-post'}>
             <Button 
             type="button"

@@ -7,7 +7,7 @@ import { FaCheck,FaTimes } from 'react-icons/fa';
 const DashUsers = () => {
   const { currentUser } = useSelector((state)=>state.user);
   const userId = currentUser._id || currentUser.updatedUser?._id;
-  const isUserAdmin = currentUser.isAdmin || currentUser.updatedUser?.isAdmin;
+  const isUserAdmin = currentUser?.isAdmin || currentUser?.updatedUser?.isAdmin;
   const [users,setUsers] = useState([]);
   const [showMore,setShowMore] = useState(true);
   const [showModel,setShowModel] = useState(false);
@@ -111,7 +111,7 @@ const DashUsers = () => {
                         {user.email}
                     </Table.Cell>
                     <Table.Cell>
-                        {user.isAdmin ? (<FaCheck className='text-green-400'/>) : (<FaTimes className='text-red-500'/>)}
+                        {user?.isAdmin ? (<FaCheck className='text-green-400'/>) : (<FaTimes className='text-red-500'/>)}
                     </Table.Cell>
                     <Table.Cell>
                       <span className='font-medium text-red-500 cursor-pointer hover:underline'
